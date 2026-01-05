@@ -23,6 +23,11 @@ export function PhotoBackground({ onPhotoChange, children }: PhotoBackgroundProp
   const [showLayerA, setShowLayerA] = useState(true);
   const currentIndexRef = useRef(0);
   const preloadedRef = useRef<Set<string>>(new Set());
+  const onPhotoChangeRef = useRef(onPhotoChange);
+
+  useEffect(() => {
+    onPhotoChangeRef.current = onPhotoChange;
+  }, [onPhotoChange]);
 
   // Preload an image
   const preloadImage = (src: string): Promise<boolean> => {
@@ -90,7 +95,7 @@ export function PhotoBackground({ onPhotoChange, children }: PhotoBackgroundProp
         setPhotos(found);
         setLayerA(found[0]);
         setLayerB(found[0]);
-        onPhotoChange?.(0, found.length);
+        onPhotoChangeRef.current?.(0, found.length);
       }
     };
 
@@ -128,11 +133,11 @@ export function PhotoBackground({ onPhotoChange, children }: PhotoBackgroundProp
       }
 
       currentIndexRef.current = nextIndex;
-      onPhotoChange?.(nextIndex, photos.length);
+      onPhotoChangeRef.current?.(nextIndex, photos.length);
     }, SLIDE_INTERVAL);
 
     return () => clearInterval(interval);
-  }, [photos, showLayerA, onPhotoChange]);
+  }, [photos, showLayerA]);
 
   if (photos.length === 0) {
     return (

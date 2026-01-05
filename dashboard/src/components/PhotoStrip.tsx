@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PhotoStripProps {
   onPhotoChange?: (index: number, total: number) => void;
@@ -17,34 +17,38 @@ export function PhotoStrip({ onPhotoChange }: PhotoStripProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showFirst, setShowFirst] = useState(true); // Toggle between two image layers
 
-  // Load photos from manifest only
-  const loadPhotos = useCallback(async () => {
-    try {
-      const response = await fetch('/photos/photos.json', { cache: 'no-store' });
-      if (response.ok) {
-        const manifest: PhotoManifest = await response.json();
-        console.log(`[PhotoStrip] Loaded manifest: ${manifest.count} photos`);
-        if (manifest.photos && manifest.photos.length > 0) {
-          // Shuffle the photos
-          const shuffled = manifest.photos
-            .map(p => `/photos/${p}`)
-            .sort(() => Math.random() - 0.5);
-          setPhotos(shuffled);
-        }
-      } else {
-        console.error('[PhotoStrip] Failed to load photos.json');
-      }
-    } catch (err) {
-      console.error('[PhotoStrip] Error loading manifest:', err);
-    }
-  }, []);
-
   // Initial load and periodic refresh
   useEffect(() => {
+    let cancelled = false;
+
+    const loadPhotos = async () => {
+      try {
+        const response = await fetch('/photos/photos.json', { cache: 'no-store' });
+        if (response.ok) {
+          const manifest: PhotoManifest = await response.json();
+          console.log(`[PhotoStrip] Loaded manifest: ${manifest.count} photos`);
+          if (!cancelled && manifest.photos && manifest.photos.length > 0) {
+            // Shuffle the photos
+            const shuffled = manifest.photos
+              .map(p => `/photos/${p}`)
+              .sort(() => Math.random() - 0.5);
+            setPhotos(shuffled);
+          }
+        } else {
+          console.error('[PhotoStrip] Failed to load photos.json');
+        }
+      } catch (err) {
+        console.error('[PhotoStrip] Error loading manifest:', err);
+      }
+    };
+
     loadPhotos();
     const interval = setInterval(loadPhotos, 10 * 60 * 1000); // Refresh every 10 mins
-    return () => clearInterval(interval);
-  }, [loadPhotos]);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Photo slideshow rotation - simple toggle approach
   useEffect(() => {

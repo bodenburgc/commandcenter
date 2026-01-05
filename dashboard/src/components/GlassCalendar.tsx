@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface CalendarEvent {
   summary: string;
@@ -54,62 +54,76 @@ export function GlassCalendar({ maxEvents = 5 }: GlassCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchEvents = useCallback(async () => {
-    try {
-      const now = new Date();
-      const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
+  const maxEventsRef = useRef(maxEvents);
 
-      const allEvents: CalendarEvent[] = [];
-
-      console.log('Fetching calendars from:', HA_URL);
-      console.log('Token exists:', !!HA_TOKEN);
-
-      await Promise.all(
-        CALENDARS.map(async (cal) => {
-          try {
-            const url = `${HA_URL}/api/calendars/${cal.entity}?start=${now.toISOString()}&end=${endDate.toISOString()}`;
-            console.log('Fetching:', cal.entity);
-
-            const response = await fetch(url, {
-              headers: { Authorization: `Bearer ${HA_TOKEN}` },
-            });
-
-            console.log(`${cal.entity} response:`, response.status);
-
-            if (response.ok) {
-              const data = await response.json();
-              console.log(`${cal.entity} events:`, data.length);
-              data.forEach((event: { summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string } }) => {
-                allEvents.push({
-                  summary: event.summary,
-                  start: event.start.dateTime || event.start.date || '',
-                  end: event.end.dateTime || event.end.date || '',
-                  calendar: cal.name,
-                  color: cal.color,
-                });
-              });
-            }
-          } catch (err) {
-            console.error(`Error fetching ${cal.entity}:`, err);
-          }
-        })
-      );
-
-      console.log('Total events found:', allEvents.length);
-      allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-      setEvents(allEvents.slice(0, maxEvents));
-      setLoading(false);
-    } catch (err) {
-      console.error('Calendar fetch error:', err);
-      setLoading(false);
-    }
+  useEffect(() => {
+    maxEventsRef.current = maxEvents;
   }, [maxEvents]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchEvents = async () => {
+      try {
+        const now = new Date();
+        const endDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days ahead
+
+        const allEvents: CalendarEvent[] = [];
+
+        console.log('Fetching calendars from:', HA_URL);
+        console.log('Token exists:', !!HA_TOKEN);
+
+        await Promise.all(
+          CALENDARS.map(async (cal) => {
+            try {
+              const url = `${HA_URL}/api/calendars/${cal.entity}?start=${now.toISOString()}&end=${endDate.toISOString()}`;
+              console.log('Fetching:', cal.entity);
+
+              const response = await fetch(url, {
+                headers: { Authorization: `Bearer ${HA_TOKEN}` },
+              });
+
+              console.log(`${cal.entity} response:`, response.status);
+
+              if (response.ok) {
+                const data = await response.json();
+                console.log(`${cal.entity} events:`, data.length);
+                data.forEach((event: { summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string } }) => {
+                  allEvents.push({
+                    summary: event.summary,
+                    start: event.start.dateTime || event.start.date || '',
+                    end: event.end.dateTime || event.end.date || '',
+                    calendar: cal.name,
+                    color: cal.color,
+                  });
+                });
+              }
+            } catch (err) {
+              console.error(`Error fetching ${cal.entity}:`, err);
+            }
+          })
+        );
+
+        if (cancelled) return;
+
+        console.log('Total events found:', allEvents.length);
+        allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+        setEvents(allEvents.slice(0, maxEventsRef.current));
+        setLoading(false);
+      } catch (err) {
+        if (cancelled) return;
+        console.error('Calendar fetch error:', err);
+        setLoading(false);
+      }
+    };
+
     fetchEvents();
     const interval = setInterval(fetchEvents, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchEvents]);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   if (loading) {
     return (

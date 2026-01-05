@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 interface CalendarEvent {
   summary: string;
@@ -48,74 +48,88 @@ export function Greeting({ name = 'Corby' }: GreetingProps) {
     return () => clearInterval(interval);
   }, []);
 
+  const nextEventRef = useRef<CalendarEvent | null>(null);
+
   // Fetch next calendar event
-  const fetchNextEvent = useCallback(async () => {
-    try {
-      const now = new Date();
-      const endDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours ahead
-
-      const allEvents: CalendarEvent[] = [];
-
-      await Promise.all(
-        CALENDARS.map(async (cal) => {
-          try {
-            const response = await fetch(
-              `${HA_URL}/api/calendars/${cal.entity}?start=${now.toISOString()}&end=${endDate.toISOString()}`,
-              {
-                headers: { Authorization: `Bearer ${HA_TOKEN}` },
-              }
-            );
-
-            if (response.ok) {
-              const data = await response.json();
-              data.forEach((event: { summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string } }) => {
-                const startTime = event.start.dateTime || event.start.date || '';
-                // Skip all-day events for "next event" display
-                if (event.start.dateTime) {
-                  allEvents.push({
-                    summary: event.summary,
-                    start: startTime,
-                    end: event.end.dateTime || event.end.date || '',
-                    calendar: cal.name,
-                  });
-                }
-              });
-            }
-          } catch {
-            // Ignore individual calendar errors
-          }
-        })
-      );
-
-      // Sort by start time and get the next one
-      allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
-
-      if (allEvents.length > 0) {
-        setNextEvent(allEvents[0]);
-      } else {
-        setNextEvent(null);
-      }
-    } catch {
-      setNextEvent(null);
-    }
-  }, []);
-
   useEffect(() => {
+    let cancelled = false;
+
+    const fetchNextEvent = async () => {
+      try {
+        const now = new Date();
+        const endDate = new Date(now.getTime() + 24 * 60 * 60 * 1000); // 24 hours ahead
+
+        const allEvents: CalendarEvent[] = [];
+
+        await Promise.all(
+          CALENDARS.map(async (cal) => {
+            try {
+              const response = await fetch(
+                `${HA_URL}/api/calendars/${cal.entity}?start=${now.toISOString()}&end=${endDate.toISOString()}`,
+                {
+                  headers: { Authorization: `Bearer ${HA_TOKEN}` },
+                }
+              );
+
+              if (response.ok) {
+                const data = await response.json();
+                data.forEach((event: { summary: string; start: { dateTime?: string; date?: string }; end: { dateTime?: string; date?: string } }) => {
+                  const startTime = event.start.dateTime || event.start.date || '';
+                  // Skip all-day events for "next event" display
+                  if (event.start.dateTime) {
+                    allEvents.push({
+                      summary: event.summary,
+                      start: startTime,
+                      end: event.end.dateTime || event.end.date || '',
+                      calendar: cal.name,
+                    });
+                  }
+                });
+              }
+            } catch {
+              // Ignore individual calendar errors
+            }
+          })
+        );
+
+        if (cancelled) return;
+
+        // Sort by start time and get the next one
+        allEvents.sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
+        if (allEvents.length > 0) {
+          setNextEvent(allEvents[0]);
+          nextEventRef.current = allEvents[0];
+        } else {
+          setNextEvent(null);
+          nextEventRef.current = null;
+        }
+      } catch {
+        if (cancelled) return;
+        setNextEvent(null);
+        nextEventRef.current = null;
+      }
+    };
+
     fetchNextEvent();
     const interval = setInterval(fetchNextEvent, 5 * 60 * 1000);
-    return () => clearInterval(interval);
-  }, [fetchNextEvent]);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
 
   // Update time until next event
   useEffect(() => {
-    if (!nextEvent) {
-      setTimeUntil('');
-      return;
-    }
-
     const updateTimeUntil = () => {
+      const event = nextEventRef.current;
+      if (!event) {
+        setTimeUntil('');
+        return;
+      }
+
       const now = new Date();
-      const eventTime = new Date(nextEvent.start);
+      const eventTime = new Date(event.start);
       const diffMs = eventTime.getTime() - now.getTime();
 
       if (diffMs < 0) {

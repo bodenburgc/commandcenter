@@ -189,20 +189,18 @@ export function KitchenWeather({ showForecast = true }: KitchenWeatherProps) {
     );
   }
 
-  const currentWeather = { description: getWeatherDescription(current.weather_code) };
-
   return (
     <div className="h-full flex flex-col text-shadow">
       {/* Current Weather - Top Row */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-4">
-          <span className="text-6xl">{currentWeather.icon}</span>
+          <WeatherIcon code={current.weather_code} className="w-16 h-16 text-white" />
           <div>
             <div className="text-6xl font-light text-white">
               {Math.round(current.temperature_2m)}°
             </div>
             <div className="text-lg text-white/70">
-              {currentWeather.description}
+              {getWeatherDescription(current.weather_code)}
             </div>
           </div>
         </div>
@@ -216,7 +214,7 @@ export function KitchenWeather({ showForecast = true }: KitchenWeatherProps) {
       {/* 5-Day Forecast - Horizontal Row */}
       <div className="flex justify-between gap-2 flex-1">
         {daily.time.slice(1, 6).map((date, idx) => {
-          const dayWeather = getWeatherInfo(daily.weather_code[idx + 1]);
+          const weatherCode = daily.weather_code[idx + 1];
           const high = Math.round(daily.temperature_2m_max[idx + 1]);
           const low = Math.round(daily.temperature_2m_min[idx + 1]);
           const precip = daily.precipitation_probability_max[idx + 1];
@@ -229,7 +227,7 @@ export function KitchenWeather({ showForecast = true }: KitchenWeatherProps) {
               <div className="text-sm text-white/70 font-medium">
                 {getDayName(date, idx + 1)}
               </div>
-              <div className="text-3xl my-1">{dayWeather.icon}</div>
+              <WeatherIcon code={weatherCode} className="w-10 h-10 text-white my-1" />
               <div className="text-lg font-medium text-white">{high}°</div>
               <div className="text-sm text-white/50">{low}°</div>
               {precip > 0 && (

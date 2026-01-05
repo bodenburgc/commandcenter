@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Camera {
   entityId: string;
@@ -28,6 +28,7 @@ function CameraImage({ camera, onClick }: { camera: Camera; onClick: () => void 
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const imageUrlRef = useRef<string | null>(null);
 
   const fetchImage = useCallback(async () => {
     try {
@@ -48,10 +49,11 @@ function CameraImage({ camera, onClick }: { camera: Camera; onClick: () => void 
       const url = URL.createObjectURL(blob);
 
       // Clean up old URL
-      setImageUrl((prevUrl) => {
-        if (prevUrl) URL.revokeObjectURL(prevUrl);
-        return url;
-      });
+      if (imageUrlRef.current) {
+        URL.revokeObjectURL(imageUrlRef.current);
+      }
+      imageUrlRef.current = url;
+      setImageUrl(url);
       setError(false);
       setLoading(false);
     } catch (err) {
@@ -68,7 +70,7 @@ function CameraImage({ camera, onClick }: { camera: Camera; onClick: () => void 
 
     return () => {
       clearInterval(interval);
-      if (imageUrl) URL.revokeObjectURL(imageUrl);
+      if (imageUrlRef.current) URL.revokeObjectURL(imageUrlRef.current);
     };
   }, [fetchImage]);
 

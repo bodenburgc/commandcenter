@@ -3,53 +3,20 @@ import ical from 'node-ical';
 
 export const calendarRouter = express.Router();
 
-// Calendar configuration - 11 family calendars
+// Calendar configuration - URLs loaded from environment variables
 const CALENDARS = [
-  {
-    name: 'Home',
-    url: 'https://calendar.google.com/calendar/ical/rbign4tavseamech15rub73bpo%40group.calendar.google.com/private-0dab1430fd9bfc9ec28c1d3f2df48b7f/basic.ics',
-  },
-  {
-    name: 'Kristine',
-    url: 'https://calendar.google.com/calendar/ical/bodenburgk%40gmail.com/private-546476c4f57288a5993f7a470dd9bac5/basic.ics',
-  },
-  {
-    name: 'KristineWork',
-    url: 'https://outlook.office365.com/owa/calendar/61f43b67499b4dbc9259e1c7284569fe@nerdherdpro.com/c06aed08d1024be498165252cc11be4111143249975685112976/calendar.ics',
-  },
-  {
-    name: 'Corby',
-    url: 'https://calendar.google.com/calendar/ical/bodenburgc%40gmail.com/private-bc0e359141047fa8baba9f23b77aa027/basic.ics',
-  },
-  {
-    name: 'CorbyWork',
-    url: 'https://calendar.google.com/calendar/ical/cbodenburg%40scalesadvertising.com/private-a374761ae54b95123e00bd8c7223f5a1/basic.ics',
-  },
-  {
-    name: 'CorbyBode',
-    url: 'https://calendar.google.com/calendar/ical/corby%40bode.design/private-dc07c908bd21d5dde42ddb7e0019775e/basic.ics',
-  },
-  {
-    name: 'McCoy',
-    url: 'https://calendar.google.com/calendar/ical/mccoybodenburg%40gmail.com/private-d978b9fef3bb17da9633494fc3753606/basic.ics',
-  },
-  {
-    name: 'Knox',
-    url: 'https://calendar.google.com/calendar/ical/knoxbodenburg%40gmail.com/private-5fad57a71427654aae6008580c326c7d/basic.ics',
-  },
-  {
-    name: 'Ripley',
-    url: 'https://calendar.google.com/calendar/ical/ripleybodenburg%40gmail.com/private-c0bf7210c9fd8d68279d34bf19bfa503/basic.ics',
-  },
-  {
-    name: 'Holidays',
-    url: 'https://calendar.google.com/calendar/ical/en.usa%23holiday%40group.v.calendar.google.com/public/basic.ics',
-  },
-  {
-    name: 'Wrestling',
-    url: 'https://calendar.google.com/calendar/ical/0b0702e5d8f35a65194e86a220b631530c8cfd027a9630407b225017af102ae6%40group.calendar.google.com/private-ea6666a3bd67adbb22195505835ec7f3/basic.ics',
-  },
-];
+  { name: 'Home', url: process.env.CAL_HOME_URL },
+  { name: 'Kristine', url: process.env.CAL_KRISTINE_URL },
+  { name: 'KristineWork', url: process.env.CAL_KRISTINEWORK_URL },
+  { name: 'Corby', url: process.env.CAL_CORBY_URL },
+  { name: 'CorbyWork', url: process.env.CAL_CORBYWORK_URL },
+  { name: 'CorbyBode', url: process.env.CAL_CORBYBODE_URL },
+  { name: 'McCoy', url: process.env.CAL_MCCOY_URL },
+  { name: 'Knox', url: process.env.CAL_KNOX_URL },
+  { name: 'Ripley', url: process.env.CAL_RIPLEY_URL },
+  { name: 'Holidays', url: process.env.CAL_HOLIDAYS_URL },
+  { name: 'Wrestling', url: process.env.CAL_WRESTLING_URL },
+].filter(cal => cal.url); // Only include calendars with URLs configured
 
 // Cache for calendar data
 let cachedEvents = null;

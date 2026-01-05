@@ -113,7 +113,7 @@ Open `http://localhost:5173?layout=kitchen` for the Kitchen display.
 ## File Structure
 
 ```
-magicmirror-office/
+commandcenter/
 ├── dashboard/                 # React frontend
 │   ├── src/
 │   │   ├── layouts/

@@ -4,7 +4,7 @@
 # Anyone with access to this shared album can add photos
 
 ALBUM_TOKEN="B2K5oqs3qeWNHl"
-PHOTOS_DIR="/Users/cbodenburg/Sites/magicmirror-office/dashboard/public/photos"
+PHOTOS_DIR="/Users/cbodenburg/Sites/commandcenter/dashboard/public/photos"
 TEMP_DIR="/tmp/icloud-photos-sync"
 
 echo "Syncing photos from iCloud Shared Album..."

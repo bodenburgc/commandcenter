@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.bodenburg.icloud-photos-sync</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/cbodenburg/Sites/magicmirror-office/scripts/sync-icloud-photos.sh</string>
+    </array>
+
+    <key>StartInterval</key>
+    <integer>1800</integer>
+    <!-- Run every 30 minutes (1800 seconds) -->
+
+    <key>RunAtLoad</key>
+    <true/>
+    <!-- Run immediately when loaded -->
+
+    <key>StandardOutPath</key>
+    <string>/tmp/icloud-photos-sync-stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/icloud-photos-sync-stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin</string>
+        <!-- Set ICLOUD_ALBUM_TOKEN here or in the script -->
+        <!-- <key>ICLOUD_ALBUM_TOKEN</key> -->
+        <!-- <string>YOUR_TOKEN_HERE</string> -->
+    </dict>
+</dict>
+</plist>
+<!--
+INSTALLATION:
+1. Edit the sync-icloud-photos.sh script with your iCloud album token
+2. Copy this plist to LaunchAgents:
+   cp com.bodenburg.icloud-photos-sync.plist ~/Library/LaunchAgents/
+3. Load the agent:
+   launchctl load ~/Library/LaunchAgents/com.bodenburg.icloud-photos-sync.plist
+4. Check status:
+   launchctl list | grep icloud-photos
+
+UNINSTALL:
+   launchctl unload ~/Library/LaunchAgents/com.bodenburg.icloud-photos-sync.plist
+   rm ~/Library/LaunchAgents/com.bodenburg.icloud-photos-sync.plist
+-->

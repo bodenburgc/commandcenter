@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "minor_version": 1,
+  "key": "person",
+  "data": {
+    "items": [
+      {
+        "id": "bodenburg",
+        "name": "Bodenburg",
+        "user_id": "9c91cd97fe6345b2b215494995c71e0e",
+        "device_trackers": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "kitchen-dashboard-api",
+  "version": "1.0.0",
+  "description": "API proxy for Kitchen Command Center - fetches iCal calendars and RSS news feeds",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "node-ical": "^0.20.1",
+    "rss-parser": "^3.13.0"
+  }
+}

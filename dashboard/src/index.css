@@ -1,0 +1,192 @@
+/* Import Google Fonts - must be first */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* Custom Fonts */
+@font-face {
+  font-family: 'Gazzetta';
+  src: url('/fonts/Gazzetta-Bold.woff2') format('woff2'),
+       url('/fonts/Gazzetta-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Gazzetta';
+  src: url('/fonts/Gazzetta-Black.woff2') format('woff2'),
+       url('/fonts/Gazzetta-Black.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-dash-bg text-dash-text font-sans m-0;
+    /* Prevent text selection on TV display */
+    user-select: none;
+    -webkit-user-select: none;
+    /* Hide scrollbars */
+    overflow: hidden;
+    /* Prevent pull-to-refresh on touch devices */
+    overscroll-behavior: none;
+  }
+
+  /* Hide cursor after inactivity (for kiosk mode) */
+  body.hide-cursor {
+    cursor: none;
+  }
+}
+
+@layer components {
+  /* Legacy card styles (for backward compatibility) */
+  .card {
+    @apply bg-dash-card border border-dash-border rounded-2xl p-6;
+  }
+
+  .card-header {
+    @apply text-tv-xs font-medium text-dash-muted uppercase tracking-wider mb-4;
+  }
+
+  .widget {
+    @apply card animate-fade-in;
+  }
+
+  /* Glassmorphism styles */
+  .glass {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+  }
+
+  .glass-panel {
+    @apply glass p-4 animate-fade-in;
+  }
+
+  .glass-header {
+    @apply text-sm font-medium text-white/60 uppercase tracking-wider mb-2;
+  }
+
+  /* Text with shadow for readability over photos */
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.6), 0 2px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  /* Photo background layer */
+  .photo-bg {
+    @apply fixed inset-0 w-full h-full object-cover;
+    z-index: 0;
+  }
+
+  /* Content layer above photo */
+  .content-layer {
+    @apply relative;
+    z-index: 10;
+  }
+}
+
+@layer utilities {
+  /* TV-safe area padding (accounts for overscan on some TVs) */
+  .tv-safe {
+    padding: 2.5%;
+  }
+
+  /* Glass-safe padding (slightly larger) */
+  .glass-safe {
+    padding: 3%;
+  }
+
+  /* Gradient text effect */
+  .text-gradient {
+    @apply bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent;
+  }
+
+  /* Time display - Gazzetta Black */
+  .ios-time-display {
+    font-family: 'Gazzetta', sans-serif;
+    font-size: clamp(100px, 23vw, 333px);
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 0.9;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Date display - Inter Thin */
+  .ios-date-display {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(20px, 3vw, 40px);
+    font-weight: 200;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  /* Weather temp display - Gazzetta Bold (smaller than time) */
+  .ios-weather-temp {
+    font-family: 'Gazzetta', sans-serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Weather temp display - Large (between time and small) */
+  .ios-weather-temp-lg {
+    font-family: 'Gazzetta', sans-serif;
+    font-size: clamp(72px, 12vw, 150px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 0.9;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* iOS 26 Liquid Glass container effect */
+  .liquid-glass {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.15) 0%,
+      rgba(255, 255, 255, 0.05) 50%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 32px;
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.3),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  }
+}

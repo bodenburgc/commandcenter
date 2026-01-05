@@ -61,7 +61,7 @@ Layout selected via URL param or `VITE_LAYOUT` env var:
 ## External APIs
 
 - **Weather**: Open-Meteo (no key required), hardcoded to River Falls, WI coordinates
-- **Calendars**: Google Calendar + Outlook iCal feeds (private URLs in `calendars.ts`)
+- **Calendars**: Google Calendar + Outlook iCal feeds (URLs in `api-proxy/.env`, colors in `calendars.ts`)
 - **News**: RSS feeds from local Minnesota/Wisconsin sources
 
 ## Display URLs

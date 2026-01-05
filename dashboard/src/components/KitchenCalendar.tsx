@@ -474,8 +474,8 @@ export function KitchenCalendar() {
         })}
       </div>
 
-      {/* Today's Events - Bottom Left, Width of 2 calendar columns */}
-      <div className="mt-auto" style={{ width: 'calc(40% + 0.5rem)' }}>
+      {/* Today's Events - Bottom Left, Width of 3 calendar columns */}
+      <div className="mt-auto" style={{ width: 'calc(60% + 1rem)' }}>
         <div className="flex items-center justify-between mb-2 text-shadow border-b border-white/20 pb-2">
           <div className="text-xl font-semibold text-white">Today</div>
           {/* Today's Weather */}
@@ -492,44 +492,35 @@ export function KitchenCalendar() {
             </div>
           )}
         </div>
-        <div className="flex flex-col gap-1.5 overflow-y-auto scrollbar-hide max-h-[300px]">
+        <div className="flex flex-col gap-1">
           {todayEvents.length > 0 ? (
             todayEvents.map((event) => (
               isDisplayedAsAllDay(event) ? (
                 // All-day events: solid color background
                 <div
                   key={event.id}
-                  className="rounded-lg px-3 py-2"
+                  className="rounded-lg px-3 py-1.5"
                   style={{ backgroundColor: event.color }}
                 >
                   <div
-                    className="text-lg font-medium truncate"
+                    className="text-base font-medium truncate"
                     style={{ color: shouldUseDarkText(event.color) ? '#0A1B2B' : '#ffffff' }}
                   >
                     {event.title}
                   </div>
-                  <div
-                    className="text-sm"
-                    style={{ color: shouldUseDarkText(event.color) ? 'rgba(10,27,43,0.7)' : 'rgba(255,255,255,0.7)' }}
-                  >
-                    {event.calendar}
-                  </div>
                 </div>
               ) : (
-                // Timed events: glass with left border
+                // Timed events: glass with left border, inline time and title
                 <div
                   key={event.id}
-                  className="glass rounded-lg px-3 py-2"
+                  className="glass rounded-lg px-3 py-1.5 flex items-center gap-3"
                   style={{ borderLeft: `4px solid ${event.color}` }}
                 >
-                  <div className="text-sm text-white/70 text-shadow">
+                  <div className="text-sm text-white/70 text-shadow whitespace-nowrap">
                     {formatTime(event.start)} - {formatTime(event.end)}
                   </div>
-                  <div className="text-lg text-white font-medium truncate text-shadow">
+                  <div className="text-base text-white font-medium truncate text-shadow">
                     {event.title}
-                  </div>
-                  <div className="text-sm text-white/50 text-shadow">
-                    {event.calendar}
                   </div>
                 </div>
               )

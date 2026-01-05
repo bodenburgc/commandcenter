@@ -55,8 +55,8 @@ function isAllDay(event) {
   return false;
 }
 
-// Fetch and parse a single calendar
-async function fetchCalendar(calConfig) {
+// Fetch and parse a single calendar (with recurring event expansion)
+async function fetchCalendar(calConfig, rangeStart, rangeEnd) {
   try {
     const events = await ical.async.fromURL(calConfig.url);
     const parsedEvents = [];
@@ -64,16 +64,82 @@ async function fetchCalendar(calConfig) {
     for (const [key, event] of Object.entries(events)) {
       if (event.type !== 'VEVENT') continue;
 
-      parsedEvents.push({
-        id: key,
-        title: event.summary || 'Untitled Event',
-        start: event.start,
-        end: event.end || event.start,
-        allDay: isAllDay(event),
-        calendar: calConfig.name,
-        location: event.location || null,
-        description: event.description || null,
-      });
+      // Handle recurring events
+      if (event.rrule) {
+        try {
+          // Get all occurrences within our date range
+          const occurrences = event.rrule.between(rangeStart, rangeEnd, true);
+
+          // Get original event's time-of-day (rrule returns UTC dates, we need to preserve local time)
+          const originalStart = new Date(event.start);
+          const originalEnd = event.end ? new Date(event.end) : originalStart;
+          const duration = originalEnd.getTime() - originalStart.getTime();
+
+          for (const occurrence of occurrences) {
+            // Check if this occurrence is excluded (EXDATE)
+            const isExcluded = event.exdate && Object.values(event.exdate).some(exdate => {
+              const exTime = new Date(exdate).getTime();
+              return Math.abs(exTime - occurrence.getTime()) < 1000 * 60 * 60; // Within 1 hour
+            });
+
+            if (isExcluded) continue;
+
+            // Create occurrence with correct time
+            // Handle all-day vs timed events differently
+            let occurrenceStart;
+            const eventIsAllDay = isAllDay(event);
+
+            if (eventIsAllDay) {
+              // For all-day events, use UTC date but LOCAL midnight
+              // This ensures the date displays correctly in the local timezone
+              occurrenceStart = new Date(
+                occurrence.getUTCFullYear(),
+                occurrence.getUTCMonth(),
+                occurrence.getUTCDate(),
+                0, 0, 0  // Local midnight, not UTC
+              );
+            } else {
+              // For timed events, combine:
+              // - Year/Month/Day from the occurrence (local time from rrule)
+              // - Hour/Minute/Second from the original event (local time)
+              occurrenceStart = new Date(
+                occurrence.getFullYear(),
+                occurrence.getMonth(),
+                occurrence.getDate(),
+                originalStart.getHours(),
+                originalStart.getMinutes(),
+                originalStart.getSeconds()
+              );
+            }
+            const occurrenceEnd = new Date(occurrenceStart.getTime() + duration);
+
+            parsedEvents.push({
+              id: `${key}-${occurrenceStart.toISOString()}`,
+              title: event.summary || 'Untitled Event',
+              start: occurrenceStart,
+              end: occurrenceEnd,
+              allDay: isAllDay(event),
+              calendar: calConfig.name,
+              location: event.location || null,
+              description: event.description || null,
+            });
+          }
+        } catch (rruleError) {
+          console.error(`Error expanding rrule for ${event.summary}:`, rruleError.message);
+        }
+      } else {
+        // Non-recurring event
+        parsedEvents.push({
+          id: key,
+          title: event.summary || 'Untitled Event',
+          start: event.start,
+          end: event.end || event.start,
+          allDay: isAllDay(event),
+          calendar: calConfig.name,
+          location: event.location || null,
+          description: event.description || null,
+        });
+      }
     }
 
     return parsedEvents;
@@ -104,9 +170,9 @@ calendarRouter.get('/', async (req, res) => {
     endDate.setDate(endDate.getDate() + 14);
     endDate.setHours(23, 59, 59, 999);
 
-    // Fetch all calendars in parallel
+    // Fetch all calendars in parallel (pass date range for recurring event expansion)
     const results = await Promise.all(
-      CALENDARS.map((cal) => fetchCalendar(cal))
+      CALENDARS.map((cal) => fetchCalendar(cal, startDate, endDate))
     );
 
     // Flatten and filter events

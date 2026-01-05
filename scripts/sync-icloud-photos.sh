@@ -21,7 +21,7 @@
 
 # Configuration
 ALBUM_TOKEN="${ICLOUD_ALBUM_TOKEN:-YOUR_ALBUM_TOKEN_HERE}"
-PHOTO_DIR="/Users/cbodenburg/Sites/magicmirror-office/dashboard/public/photos"
+PHOTO_DIR="/Users/cbodenburg/Sites/commandcenter/dashboard/public/photos"
 TEMP_DIR="/tmp/icloud-photos-sync"
 MAX_PHOTOS=50
 LOG_FILE="/tmp/icloud-photos-sync.log"

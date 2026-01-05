@@ -7,7 +7,7 @@
 
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/cbodenburg/Sites/magicmirror-office/scripts/sync-icloud-photos.sh</string>
+        <string>/Users/cbodenburg/Sites/commandcenter/scripts/sync-icloud-photos.sh</string>
     </array>
 
     <key>StartInterval</key>

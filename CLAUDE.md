@@ -130,6 +130,6 @@ crontab -l
 
 | Display | URL |
 |---------|-----|
-| Kitchen (TCL 43" Fire TV) | `http://dashboard.bode.design?layout=kitchen&rotate=270` |
-| Office (Dell U2725QE) | `http://dashboard.bode.design?layout=kitchen&rotate=270&scale=1.0` |
-| API Health | `http://dashboard.bode.design/api/health` |
+| Kitchen (TCL 43" Fire TV) | `https://dashboard.bode.design?layout=kitchen&rotate=270` |
+| Office (Dell U2725QE) | `https://dashboard.bode.design?layout=kitchen&rotate=270&scale=1.0` |
+| API Health | `https://dashboard.bode.design/api/health` |

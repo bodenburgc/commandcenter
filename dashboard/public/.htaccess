@@ -1,0 +1,11 @@
+# Enable RewriteEngine
+RewriteEngine On
+
+# Proxy API requests to Node.js backend
+RewriteCond %{REQUEST_URI} ^/api/(.*)$
+RewriteRule ^api/(.*)$ http://127.0.0.1:3001/api/$1 [P,L]
+
+# Handle client-side routing (SPA)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule . /index.html [L]

@@ -1,16 +1,11 @@
-// Legacy components
-export { Clock } from './Clock';
-export { Weather } from './Weather';
-export { Calendar } from './Calendar';
-export { SystemStatus } from './SystemStatus';
-export { CameraGrid } from './CameraGrid';
-export { Thermostat } from './Thermostat';
-export { EnergyMonitor } from './EnergyMonitor';
-export { PhotoSlideshow } from './PhotoSlideshow';
+// Kitchen layout components
+export { KitchenWeather } from './KitchenWeather';
+export { KitchenCalendar } from './KitchenCalendar';
+export { NewsStrip } from './NewsStrip';
+export { PhotoStrip } from './PhotoStrip';
 
-// Glassmorphism components
+// Office layout components (glassmorphism style)
 export { PhotoBackground } from './PhotoBackground';
 export { GlassClock } from './GlassClock';
 export { GlassWeather } from './GlassWeather';
 export { GlassCalendar } from './GlassCalendar';
-export { Greeting } from './Greeting';

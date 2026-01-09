@@ -1,51 +1,45 @@
-import { Clock } from '../components/Clock';
-import { Weather } from '../components/Weather';
-import { CameraGrid } from '../components/CameraGrid';
-import { Thermostat } from '../components/Thermostat';
-import { EnergyMonitor } from '../components/EnergyMonitor';
-import { Calendar } from '../components/Calendar';
-import { PhotoSlideshow } from '../components/PhotoSlideshow';
+import { useState } from 'react';
+import { PhotoBackground } from '../components/PhotoBackground';
+import { GlassClock } from '../components/GlassClock';
+import { GlassWeather } from '../components/GlassWeather';
+import { GlassCalendar } from '../components/GlassCalendar';
 
 export function OfficeDashboard() {
+  const [photoInfo, setPhotoInfo] = useState({ index: 0, total: 0 });
+
   return (
-    <div className="min-h-screen w-screen bg-dash-bg tv-safe">
-      {/* Main Grid Layout - optimized for 55" TV @ 1080p */}
-      <div className="grid grid-cols-12 grid-rows-6 gap-4 h-screen p-[2.5%]">
-        {/* Top Left - Clock */}
-        <div className="col-span-3 row-span-2">
-          <Clock />
+    <div className="min-h-screen w-screen overflow-hidden">
+      {/* Photo background with depth effect - clock renders between layers */}
+      <PhotoBackground
+        onPhotoChange={(index, total) => setPhotoInfo({ index, total })}
+      >
+        {/* This renders between background and foreground for depth effect */}
+        <div className="w-full pt-12">
+          <GlassClock />
+        </div>
+      </PhotoBackground>
+
+      {/* Content layer - always on top */}
+      <div className="relative z-20 min-h-screen w-screen glass-safe flex flex-col pointer-events-none">
+        {/* Weather - top right corner */}
+        <div className="flex justify-end pointer-events-auto">
+          <GlassWeather />
         </div>
 
-        {/* Top Center - Photo Slideshow */}
-        <div className="col-span-6 row-span-3">
-          <PhotoSlideshow />
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Bottom - Calendar strip */}
+        <div className="mb-4 pointer-events-auto">
+          <GlassCalendar maxEvents={5} />
         </div>
 
-        {/* Top Right - Calendar */}
-        <div className="col-span-3 row-span-4">
-          <Calendar maxEvents={10} />
-        </div>
-
-        {/* Middle Left - Thermostat & Energy */}
-        <div className="col-span-3 row-span-2 grid grid-rows-2 gap-4">
-          <Thermostat />
-          <EnergyMonitor />
-        </div>
-
-        {/* Bottom Center - Cameras */}
-        <div className="col-span-6 row-span-3">
-          <CameraGrid columns={3} maxCameras={6} />
-        </div>
-
-        {/* Bottom Left - Weather */}
-        <div className="col-span-3 row-span-2">
-          <Weather />
-        </div>
-
-        {/* Bottom Right - Empty for now or future widget */}
-        <div className="col-span-3 row-span-2">
-          {/* Could add another widget here */}
-        </div>
+        {/* Photo counter - subtle at bottom right */}
+        {photoInfo.total > 0 && (
+          <div className="absolute bottom-4 right-4 text-sm text-white/40 text-shadow">
+            {photoInfo.index + 1} / {photoInfo.total}
+          </div>
+        )}
       </div>
     </div>
   );

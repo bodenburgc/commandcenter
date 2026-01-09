@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.bodenburg.commandcenter-dashboard</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/local/bin/npx</string>
+        <string>serve</string>
+        <string>-s</string>
+        <string>/Users/cbodenburg/Sites/commandcenter/dashboard/dist</string>
+        <string>-l</string>
+        <string>5173</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/cbodenburg/Sites/commandcenter/dashboard</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/commandcenter-dashboard-stdout.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/commandcenter-dashboard-stderr.log</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+    </dict>
+</dict>
+</plist>

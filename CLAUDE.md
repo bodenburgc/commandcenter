@@ -131,5 +131,38 @@ crontab -l
 | Display | URL |
 |---------|-----|
 | Kitchen (TCL 43" Fire TV) | `https://dashboard.bode.design?layout=kitchen&rotate=270` |
-| Office (Dell U2725QE) | `https://dashboard.bode.design?layout=kitchen&rotate=270&scale=1.0` |
+| Office (Samsung 55" 4K) | `https://dashboard.bode.design?layout=office` |
 | API Health | `https://dashboard.bode.design/api/health` |
+
+## Office Layout (In Development)
+
+The office layout (`?layout=office`) is being redesigned with Netflix-style horizontal scrolling:
+
+**Target Display**: Samsung UN55F9000AFXZA 55" 4K TV (3840x2160, landscape orientation)
+
+**Features**:
+- Photo background with 15-minute rotation (configurable via `slideInterval` prop)
+- Netflix-style horizontal scrolling content shelves
+- Work calendar integration (Google Calendar via iCal)
+- Google Tasks integration (two lists: Scales, BODE)
+- Shopify revenue widget showing commission from client stores
+
+**New API Endpoints** (planned):
+- `GET /api/tasks` - Google Tasks lists
+- `GET /api/shopify/revenue` - Shopify store revenue metrics
+
+**Environment Variables** (add to `api-proxy/.env`):
+```bash
+# Work Calendar
+CAL_WORK_URL=https://calendar.google.com/calendar/ical/...
+
+# Google Tasks OAuth
+GOOGLE_CLIENT_ID=your-client-id
+GOOGLE_CLIENT_SECRET=your-client-secret
+GOOGLE_REFRESH_TOKEN=your-refresh-token
+
+# Shopify - FishArmor
+SHOPIFY_FISHARMOR_STORE=fisharmor.myshopify.com
+SHOPIFY_FISHARMOR_ACCESS_TOKEN=shpat_xxxxx
+SHOPIFY_FISHARMOR_COMMISSION=0.03
+```

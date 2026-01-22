@@ -1,46 +1,42 @@
 import { useState } from 'react';
 import { PhotoBackground } from '../components/PhotoBackground';
-import { GlassClock } from '../components/GlassClock';
-import { GlassWeather } from '../components/GlassWeather';
-import { GlassCalendar } from '../components/GlassCalendar';
+import { OfficeHeader } from '../components/office/OfficeHeader';
+import { WorkCalendarShelf } from '../components/office/WorkCalendarShelf';
+import { TodoShelf } from '../components/office/TodoShelf';
+import { RevenueWidget } from '../components/office/RevenueWidget';
 
 export function OfficeDashboard() {
   const [photoInfo, setPhotoInfo] = useState({ index: 0, total: 0 });
 
   return (
-    <div className="min-h-screen w-screen overflow-hidden">
-      {/* Photo background with depth effect - clock renders between layers */}
+    <div className="min-h-screen w-screen overflow-hidden bg-[#141414]">
+      {/* Photo background with 15-minute rotation */}
       <PhotoBackground
+        slideInterval={900000}
         onPhotoChange={(index, total) => setPhotoInfo({ index, total })}
-      >
-        {/* This renders between background and foreground for depth effect */}
-        <div className="w-full pt-12">
-          <GlassClock />
-        </div>
-      </PhotoBackground>
+      />
 
-      {/* Content layer - always on top */}
-      <div className="relative z-20 min-h-screen w-screen glass-safe flex flex-col pointer-events-none">
-        {/* Weather - top right corner */}
-        <div className="flex justify-end pointer-events-auto">
-          <GlassWeather />
-        </div>
+      {/* Fixed header - time and weather */}
+      <OfficeHeader />
 
-        {/* Spacer */}
-        <div className="flex-1" />
+      {/* Main content area - scrollable shelves */}
+      <div className="relative z-20 min-h-screen pt-28 pb-20">
+        {/* Work Calendar Shelf */}
+        <WorkCalendarShelf />
 
-        {/* Bottom - Calendar strip */}
-        <div className="mb-4 pointer-events-auto">
-          <GlassCalendar maxEvents={5} />
-        </div>
+        {/* Task Shelves (Scales, BODE) */}
+        <TodoShelf />
 
-        {/* Photo counter - subtle at bottom right */}
+        {/* Photo counter - subtle */}
         {photoInfo.total > 0 && (
-          <div className="absolute bottom-4 right-4 text-sm text-white/40 text-shadow">
+          <div className="fixed bottom-20 right-8 text-sm text-white/30 z-20">
             {photoInfo.index + 1} / {photoInfo.total}
           </div>
         )}
       </div>
+
+      {/* Fixed revenue widget at bottom */}
+      <RevenueWidget />
     </div>
   );
 }

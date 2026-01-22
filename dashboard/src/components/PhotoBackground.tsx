@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 
-const SLIDE_INTERVAL = 15000; // 15 seconds
+const DEFAULT_SLIDE_INTERVAL = 15000; // 15 seconds
 const MAX_PHOTOS = 100;
 const FADE_DURATION = 1500;
 
 interface PhotoBackgroundProps {
   onPhotoChange?: (index: number, total: number) => void;
   children?: ReactNode; // Clock/content to render between layers
+  slideInterval?: number; // Time between photo transitions in ms (default: 15000)
 }
 
 interface PhotoData {
@@ -16,7 +17,7 @@ interface PhotoData {
   fgSrc?: string;
 }
 
-export function PhotoBackground({ onPhotoChange, children }: PhotoBackgroundProps) {
+export function PhotoBackground({ onPhotoChange, children, slideInterval = DEFAULT_SLIDE_INTERVAL }: PhotoBackgroundProps) {
   const [photos, setPhotos] = useState<PhotoData[]>([]);
   const [layerA, setLayerA] = useState<PhotoData | null>(null);
   const [layerB, setLayerB] = useState<PhotoData | null>(null);
@@ -134,10 +135,10 @@ export function PhotoBackground({ onPhotoChange, children }: PhotoBackgroundProp
 
       currentIndexRef.current = nextIndex;
       onPhotoChangeRef.current?.(nextIndex, photos.length);
-    }, SLIDE_INTERVAL);
+    }, slideInterval);
 
     return () => clearInterval(interval);
-  }, [photos, showLayerA]);
+  }, [photos, showLayerA, slideInterval]);
 
   if (photos.length === 0) {
     return (

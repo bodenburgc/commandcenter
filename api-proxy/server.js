@@ -3,6 +3,8 @@ import express from 'express';
 import cors from 'cors';
 import { calendarRouter } from './routes/calendars.js';
 import { newsRouter } from './routes/news.js';
+import { tasksRouter } from './routes/tasks.js';
+import { shopifyRouter } from './routes/shopify.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -20,6 +22,8 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/calendars', calendarRouter);
 app.use('/api/news', newsRouter);
+app.use('/api/tasks', tasksRouter);
+app.use('/api/shopify', shopifyRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -43,13 +47,15 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`
 ╔═══════════════════════════════════════════════════════╗
-║   Kitchen Command Center API Proxy                    ║
+║   Family Command Center API Proxy                     ║
 ║   Running on http://localhost:${PORT}                    ║
 ║                                                       ║
 ║   Endpoints:                                          ║
-║     GET /api/calendars - Family calendar events       ║
-║     GET /api/news      - Local news headlines         ║
-║     GET /api/health    - Service health check         ║
+║     GET /api/calendars      - Family calendar events  ║
+║     GET /api/news           - Local news headlines    ║
+║     GET /api/tasks          - Google Tasks lists      ║
+║     GET /api/shopify/revenue - Shopify store revenue  ║
+║     GET /api/health         - Service health check    ║
 ╚═══════════════════════════════════════════════════════╝
   `);
 });

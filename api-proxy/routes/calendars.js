@@ -16,6 +16,7 @@ const CALENDARS = [
   { name: 'Ripley', url: process.env.CAL_RIPLEY_URL },
   { name: 'Holidays', url: process.env.CAL_HOLIDAYS_URL },
   { name: 'Wrestling', url: process.env.CAL_WRESTLING_URL },
+  { name: 'Work', url: process.env.CAL_WORK_URL }, // Office display work calendar
 ].filter(cal => cal.url); // Only include calendars with URLs configured
 
 // Cache for calendar data

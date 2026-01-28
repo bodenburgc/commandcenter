@@ -319,19 +319,6 @@ export function KitchenCalendar() {
     return eventStart.getTime() < today.getTime() && eventEnd.getTime() > today.getTime();
   });
 
-  // Deduplicate events by title + start + end time
-  // (same event may appear on multiple family calendars)
-  const dedupeEvents = (eventList: CalendarEvent[]): CalendarEvent[] => {
-    const seen = new Map<string, CalendarEvent>();
-    for (const event of eventList) {
-      const key = `${event.title}|${event.start.getTime()}|${event.end.getTime()}`;
-      if (!seen.has(key)) {
-        seen.set(key, event);
-      }
-    }
-    return Array.from(seen.values());
-  };
-
   // Filter out past events (events that have already ended)
   const filterPastEvents = (eventList: CalendarEvent[]): CalendarEvent[] => {
     return eventList.filter(event => {
@@ -342,13 +329,11 @@ export function KitchenCalendar() {
     });
   };
 
-  // Combine today's events with ongoing events, then dedupe and filter past
-  const todayEvents = filterPastEvents(
-    dedupeEvents([
-      ...ongoingEvents,
-      ...(todayGroup?.events || [])
-    ])
-  ).sort((a, b) => {
+  // Combine today's events with ongoing events, then filter past
+  const todayEvents = filterPastEvents([
+    ...ongoingEvents,
+    ...(todayGroup?.events || [])
+  ]).sort((a, b) => {
     // All-day and ongoing events first
     if (a.allDay && !b.allDay) return -1;
     if (!a.allDay && b.allDay) return 1;
@@ -404,11 +389,11 @@ export function KitchenCalendar() {
         return eventStartDate.getTime() < date.getTime() && eventSpansDate(event, date);
       });
 
-      // Combine and dedupe events by title+time (same event on multiple calendars)
-      const dayEvents = dedupeEvents([
+      // Combine events for this day
+      const dayEvents = [
         ...spanningEvents,
         ...(existingGroup?.events || [])
-      ]).sort((a, b) => {
+      ].sort((a, b) => {
         if (a.allDay && !b.allDay) return -1;
         if (!a.allDay && b.allDay) return 1;
         return a.start.getTime() - b.start.getTime();

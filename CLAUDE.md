@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Family Command Center - a React + TypeScript dashboard displayed on multiple screens:
 - **Kitchen**: TCL 43" TV in vertical orientation (1080x1920) via Fire TV Stick
-- **Office**: Dell U2725QE 27" 4K monitor in vertical orientation
+- **Office**: Samsung UN55F9000AFXZA 55" 4K TV (3840x2160, landscape orientation)
 
 **Server**: KnownHost VPS (dashboard.bode.design)
 **Location**: River Falls, WI (44.8614, -92.6277)
@@ -48,9 +48,15 @@ npm run dev      # Start with --watch for auto-reload
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/calendars` | GET | Aggregated family calendar events |
-| `/api/news` | GET | Local news (MPR, Star Tribune, KARE11, St. Croix 360) |
+| `/api/calendars` | GET | Aggregated family calendar events (5-min cache) |
+| `/api/news` | GET | Local news headlines (15-min cache) |
 | `/api/news/refresh` | POST | Force news cache refresh |
+| `/api/tasks` | GET | Google Tasks lists (5-min cache) |
+| `/api/tasks/:listName` | GET | Tasks from specific list (scales, bode) |
+| `/api/tasks/refresh` | POST | Force tasks cache refresh |
+| `/api/shopify/revenue` | GET | Shopify store revenue metrics (15-min cache) |
+| `/api/shopify/revenue/:storeId` | GET | Revenue for specific store |
+| `/api/shopify/revenue/refresh` | POST | Force revenue cache refresh |
 | `/api/health` | GET | Service health + uptime |
 
 ## Layout System
@@ -131,38 +137,53 @@ crontab -l
 | Display | URL |
 |---------|-----|
 | Kitchen (TCL 43" Fire TV) | `https://dashboard.bode.design?layout=kitchen&rotate=270` |
-| Office (Samsung 55" 4K) | `https://dashboard.bode.design?layout=office` |
+| Office (Samsung 55" 4K TV) | `https://dashboard.bode.design?layout=office` |
 | API Health | `https://dashboard.bode.design/api/health` |
 
-## Office Layout (In Development)
+## Office Layout
 
-The office layout (`?layout=office`) is being redesigned with Netflix-style horizontal scrolling:
-
-**Target Display**: Samsung UN55F9000AFXZA 55" 4K TV (3840x2160, landscape orientation)
+The office layout (`?layout=office`) features a Netflix-style dashboard for 4K landscape displays.
 
 **Features**:
-- Photo background with 15-minute rotation (configurable via `slideInterval` prop)
-- Netflix-style horizontal scrolling content shelves
+- Photo background with configurable rotation interval
+- Horizontal scrolling content shelves
 - Work calendar integration (Google Calendar via iCal)
-- Google Tasks integration (two lists: Scales, BODE)
-- Shopify revenue widget showing commission from client stores
+- Google Tasks integration (two lists from separate Google accounts: Scales, BODE)
+- Shopify revenue widget showing commission from multiple client stores
 
-**New API Endpoints** (planned):
-- `GET /api/tasks` - Google Tasks lists
-- `GET /api/shopify/revenue` - Shopify store revenue metrics
+**Office-specific components** (`src/components/office/`):
+- `OfficeHeader.tsx` - Clock and date header
+- `WorkCalendarShelf.tsx` - Calendar events in shelf format
+- `TodoShelf.tsx` / `TodoCard.tsx` - Task lists display
+- `RevenueWidget.tsx` - Shopify commission tracker
+- `ContentShelf.tsx` / `CalendarCard.tsx` - Reusable shelf components
 
-**Environment Variables** (add to `api-proxy/.env`):
+## Environment Variables
+
+Required environment variables in `api-proxy/.env`:
+
 ```bash
-# Work Calendar
-CAL_WORK_URL=https://calendar.google.com/calendar/ical/...
+# Calendar iCal URLs (11 calendars)
+CAL_HOME_URL=https://calendar.google.com/calendar/ical/...
+CAL_KRISTINE_URL=...
+CAL_WORK_URL=...
+# ... additional calendar URLs
 
-# Google Tasks OAuth
-GOOGLE_CLIENT_ID=your-client-id
-GOOGLE_CLIENT_SECRET=your-client-secret
-GOOGLE_REFRESH_TOKEN=your-refresh-token
+# Google Tasks - Scales account
+TASKS_SCALES_LIST_ID=your-list-id
+GOOGLE_SCALES_CLIENT_ID=your-client-id
+GOOGLE_SCALES_CLIENT_SECRET=your-client-secret
+GOOGLE_SCALES_REFRESH_TOKEN=your-refresh-token
 
-# Shopify - FishArmor
+# Google Tasks - BODE account
+TASKS_BODE_LIST_ID=your-list-id
+GOOGLE_BODE_CLIENT_ID=your-client-id
+GOOGLE_BODE_CLIENT_SECRET=your-client-secret
+GOOGLE_BODE_REFRESH_TOKEN=your-refresh-token
+
+# Shopify stores (supports: FISHARMOR, KEYBAR, HOLEMOLE, SLAMMERMARINE)
 SHOPIFY_FISHARMOR_STORE=fisharmor.myshopify.com
 SHOPIFY_FISHARMOR_ACCESS_TOKEN=shpat_xxxxx
 SHOPIFY_FISHARMOR_COMMISSION=0.03
+# Repeat pattern for other stores...
 ```

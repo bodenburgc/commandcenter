@@ -1,6 +1,7 @@
 // Kitchen layout components
 export { KitchenWeather } from './KitchenWeather';
 export { KitchenCalendar } from './KitchenCalendar';
+export { KitchenReminders } from './KitchenReminders';
 export { NewsStrip } from './NewsStrip';
 export { PhotoStrip } from './PhotoStrip';
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { KITCHEN_CALENDARS } from '../config/calendars';
+import { KitchenReminders } from './KitchenReminders';
 
 interface CalendarEvent {
   id: string;
@@ -489,62 +490,70 @@ export function KitchenCalendar() {
         })}
       </div>
 
-      {/* Today's Events - Bottom Left, Width of 3 calendar columns */}
-      <div className="mt-auto" style={{ width: 'calc(60% + 1rem)' }}>
-        <div className="flex items-center justify-between mb-2 text-shadow border-b border-white/20 pb-2">
-          <div className="text-xl font-semibold text-white">Today</div>
-          {/* Today's Weather */}
-          {forecast[0] && (
-            <div className="flex items-center gap-2">
-              <WeatherIcon code={forecast[0].code} className="w-6 h-6 text-white" />
-              <div className="text-base text-white">
-                {forecast[0].high}°
-                <span className="text-white/50">/{forecast[0].low}°</span>
+      {/* Bottom Row: Today (left 50%) + Reminders (right 50%) */}
+      <div className="mt-auto flex gap-4">
+        {/* Today's Events - Left */}
+        <div className="w-1/2">
+          <div className="flex items-center justify-between mb-2 text-shadow border-b border-white/20 pb-2">
+            <div className="text-xl font-semibold text-white">Today</div>
+            {/* Today's Weather */}
+            {forecast[0] && (
+              <div className="flex items-center gap-2">
+                <WeatherIcon code={forecast[0].code} className="w-6 h-6 text-white" />
+                <div className="text-base text-white">
+                  {forecast[0].high}°
+                  <span className="text-white/50">/{forecast[0].low}°</span>
+                </div>
+                {forecast[0].precip > 0 && (
+                  <div className="text-blue-400 text-sm">{forecast[0].precip}%</div>
+                )}
               </div>
-              {forecast[0].precip > 0 && (
-                <div className="text-blue-400 text-sm">{forecast[0].precip}%</div>
-              )}
-            </div>
-          )}
-        </div>
-        <div className="flex flex-col gap-1">
-          {todayEvents.length > 0 ? (
-            todayEvents.map((event) => (
-              isDisplayedAsAllDay(event) ? (
-                // All-day events: solid color background
-                <div
-                  key={event.id}
-                  className="rounded-lg px-3 py-1.5"
-                  style={{ backgroundColor: event.color }}
-                >
+            )}
+          </div>
+          <div className="flex flex-col gap-1">
+            {todayEvents.length > 0 ? (
+              todayEvents.map((event) => (
+                isDisplayedAsAllDay(event) ? (
+                  // All-day events: solid color background
                   <div
-                    className="text-base font-medium truncate"
-                    style={{ color: shouldUseDarkText(event.color) ? '#0A1B2B' : '#ffffff' }}
+                    key={event.id}
+                    className="rounded-lg px-3 py-1.5"
+                    style={{ backgroundColor: event.color }}
                   >
-                    {event.title}
+                    <div
+                      className="text-base font-medium truncate"
+                      style={{ color: shouldUseDarkText(event.color) ? '#0A1B2B' : '#ffffff' }}
+                    >
+                      {event.title}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                // Timed events: glass with left border, inline time and title
-                <div
-                  key={event.id}
-                  className="glass rounded-lg px-3 py-1.5 flex items-center gap-3"
-                  style={{ borderLeft: `4px solid ${event.color}` }}
-                >
-                  <div className="text-sm text-white/70 text-shadow whitespace-nowrap">
-                    {formatTime(event.start)} - {formatTime(event.end)}
+                ) : (
+                  // Timed events: glass with left border, inline time and title
+                  <div
+                    key={event.id}
+                    className="glass rounded-lg px-3 py-1.5 flex items-center gap-3"
+                    style={{ borderLeft: `4px solid ${event.color}` }}
+                  >
+                    <div className="text-sm text-white/70 text-shadow whitespace-nowrap">
+                      {formatTime(event.start)} - {formatTime(event.end)}
+                    </div>
+                    <div className="text-base text-white font-medium truncate text-shadow">
+                      {event.title}
+                    </div>
                   </div>
-                  <div className="text-base text-white font-medium truncate text-shadow">
-                    {event.title}
-                  </div>
-                </div>
-              )
-            ))
-          ) : (
-            <div className="text-white/40 text-lg py-4">
-              No events today
-            </div>
-          )}
+                )
+              ))
+            ) : (
+              <div className="text-white/40 text-lg py-4">
+                No events today
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Reminders - Right */}
+        <div className="w-1/2">
+          <KitchenReminders />
         </div>
       </div>
     </div>

@@ -17,9 +17,9 @@ export const KITCHEN_CALENDARS: CalendarConfig[] = [
   { name: 'CorbyBode', color: '#009688' },   // Teal
   { name: 'McCoy', color: '#4CAF50' },       // Green
   { name: 'Knox', color: '#00BFFF' },        // Bright Blue
-  { name: 'Ripley', color: '#FF6D01' },      // Orange
+  { name: 'Ripley', color: '#9C27B0' },      // Purple
   { name: 'Holidays', color: '#607D8B' },    // Gray
-  { name: 'Wrestling', color: '#9C27B0' },   // Purple
+  { name: 'Wrestling', color: '#FF6D01' },   // Orange
   { name: 'Work', color: '#1A73E8' },        // Google Blue (for Office display)
 ];
 

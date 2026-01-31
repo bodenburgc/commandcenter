@@ -141,7 +141,7 @@ export function KitchenDashboard() {
           <KitchenWeather showForecast={false} />
         </section>
 
-        {/* Calendar Section - takes remaining space */}
+        {/* Calendar Section (includes Today + Reminders at bottom) */}
         <section className="flex-1 min-h-0 overflow-hidden">
           <KitchenCalendar />
         </section>

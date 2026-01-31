@@ -5,6 +5,7 @@ import { calendarRouter } from './routes/calendars.js';
 import { newsRouter } from './routes/news.js';
 import { tasksRouter } from './routes/tasks.js';
 import { shopifyRouter } from './routes/shopify.js';
+import { remindersRouter } from './routes/reminders.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -24,6 +25,7 @@ app.use('/api/calendars', calendarRouter);
 app.use('/api/news', newsRouter);
 app.use('/api/tasks', tasksRouter);
 app.use('/api/shopify', shopifyRouter);
+app.use('/api/reminders', remindersRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {

@@ -54,6 +54,8 @@ npm run dev      # Start with --watch for auto-reload
 | `/api/tasks` | GET | Google Tasks lists (5-min cache) |
 | `/api/tasks/:listName` | GET | Tasks from specific list (scales, bode) |
 | `/api/tasks/refresh` | POST | Force tasks cache refresh |
+| `/api/reminders` | GET | Apple Reminders (pushed from Mac Shortcut) |
+| `/api/reminders` | POST | Receive reminders from Apple Shortcut |
 | `/api/shopify/revenue` | GET | Shopify store revenue metrics (15-min cache) |
 | `/api/shopify/revenue/:storeId` | GET | Revenue for specific store |
 | `/api/shopify/revenue/refresh` | POST | Force revenue cache refresh |
@@ -139,6 +141,25 @@ crontab -l
 | Kitchen (TCL 43" Fire TV) | `https://dashboard.bode.design?layout=kitchen&rotate=270` |
 | Office (Samsung 55" 4K TV) | `https://dashboard.bode.design?layout=office` |
 | API Health | `https://dashboard.bode.design/api/health` |
+
+## Apple Reminders Sync
+
+Reminders from Apple Reminders app are synced to the dashboard via a script running on Corby's Mac.
+
+**Mac-side components** (not deployed to server):
+- Sync script: `~/Sites/commandcenter/scripts/sync-reminders.sh`
+- launchd plist: `~/Library/LaunchAgents/com.bode.reminders-sync.plist`
+- Log file: `~/Sites/commandcenter/scripts/reminders-sync.log`
+
+**Synced lists**: Family, McCOY, KNOX, RIPLEY
+
+**Manage sync**:
+```bash
+launchctl list | grep bode              # Check status
+launchctl unload ~/Library/LaunchAgents/com.bode.reminders-sync.plist  # Stop
+launchctl load ~/Library/LaunchAgents/com.bode.reminders-sync.plist    # Start
+tail -f ~/Sites/commandcenter/scripts/reminders-sync.log               # View log
+```
 
 ## Environment Variables
 

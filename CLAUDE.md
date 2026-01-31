@@ -89,7 +89,7 @@ Layout selected via URL param or `VITE_LAYOUT` env var:
 - Photos: `~/photos/` (symlinked to `~/public_html/photos/`)
 - Logs: `~/logs/photo-sync.log`
 
-**Server stability**: VPS has 421+ days uptime (as of Jan 2026), reboots are rare.
+**Server stability**: VPS has high uptime, reboots are rare.
 
 ```bash
 # Deploy from dev machine
@@ -140,50 +140,10 @@ crontab -l
 | Office (Samsung 55" 4K TV) | `https://dashboard.bode.design?layout=office` |
 | API Health | `https://dashboard.bode.design/api/health` |
 
-## Office Layout
-
-The office layout (`?layout=office`) features a Netflix-style dashboard for 4K landscape displays.
-
-**Features**:
-- Photo background with configurable rotation interval
-- Horizontal scrolling content shelves
-- Work calendar integration (Google Calendar via iCal)
-- Google Tasks integration (two lists from separate Google accounts: Scales, BODE)
-- Shopify revenue widget showing commission from multiple client stores
-
-**Office-specific components** (`src/components/office/`):
-- `OfficeHeader.tsx` - Clock and date header
-- `WorkCalendarShelf.tsx` - Calendar events in shelf format
-- `TodoShelf.tsx` / `TodoCard.tsx` - Task lists display
-- `RevenueWidget.tsx` - Shopify commission tracker
-- `ContentShelf.tsx` / `CalendarCard.tsx` - Reusable shelf components
-
 ## Environment Variables
 
-Required environment variables in `api-proxy/.env`:
+All environment variables are stored in `api-proxy/.env`:
 
-```bash
-# Calendar iCal URLs (11 calendars)
-CAL_HOME_URL=https://calendar.google.com/calendar/ical/...
-CAL_KRISTINE_URL=...
-CAL_WORK_URL=...
-# ... additional calendar URLs
-
-# Google Tasks - Scales account
-TASKS_SCALES_LIST_ID=your-list-id
-GOOGLE_SCALES_CLIENT_ID=your-client-id
-GOOGLE_SCALES_CLIENT_SECRET=your-client-secret
-GOOGLE_SCALES_REFRESH_TOKEN=your-refresh-token
-
-# Google Tasks - BODE account
-TASKS_BODE_LIST_ID=your-list-id
-GOOGLE_BODE_CLIENT_ID=your-client-id
-GOOGLE_BODE_CLIENT_SECRET=your-client-secret
-GOOGLE_BODE_REFRESH_TOKEN=your-refresh-token
-
-# Shopify stores (supports: FISHARMOR, KEYBAR, HOLEMOLE, SLAMMERMARINE)
-SHOPIFY_FISHARMOR_STORE=fisharmor.myshopify.com
-SHOPIFY_FISHARMOR_ACCESS_TOKEN=shpat_xxxxx
-SHOPIFY_FISHARMOR_COMMISSION=0.03
-# Repeat pattern for other stores...
-```
+- **Calendar URLs**: `CAL_HOME_URL`, `CAL_KRISTINE_URL`, `CAL_WORK_URL`, etc. (11 iCal URLs)
+- **Google Tasks**: Two accounts (Scales, BODE) each require `TASKS_*_LIST_ID`, `GOOGLE_*_CLIENT_ID`, `GOOGLE_*_CLIENT_SECRET`, `GOOGLE_*_REFRESH_TOKEN`
+- **Shopify stores**: Each store (FISHARMOR, KEYBAR, HOLEMOLE, SLAMMERMARINE) requires `SHOPIFY_*_STORE`, `SHOPIFY_*_ACCESS_TOKEN`, `SHOPIFY_*_COMMISSION`
